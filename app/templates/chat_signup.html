@@ -1,0 +1,83 @@
+{% extends "base.html" %} 
+
+{% block title %}Welcome!{% endblock %} 
+
+{% block head %} 
+<style>body{background-color: rgb(247, 247, 247);}</style>
+{% endblock %}
+
+{% block content %}
+
+    <form action="{{request.path}}" method="post" style="padding-top: 15px; border-radius: 15px;" enctype = multipart/form-data>
+        <div class="container border rounded " style="background-color: white;">
+        <div class="text-center">
+        <img src="/static/images/Logo2.png" width="110px" height="110px"><br>
+        <b style="font-size: 55px; font-family: PingFang SC;">Join Nicely as a counselor</b><br><br>
+    </div>
+        <div class="container" style="width: 1000px; height: 410px;">
+        <div class="row">
+        <div class="container col">
+        <div class="form-group">
+        <label for="name">Full Name:</label><br>
+        <input type="text" name="name" placeholder="Full Name" class="form-control inputbox" /><br><br>
+        </div>
+        <label for="Language">Language preferred:</label>
+        <select type="text" name="language" class="form-select textstyle inputbox"><br>
+            <option selected >Select</option>
+            <option value="Chinese">Chinese - 中文</option>
+            <option value="Spanish">Spanish - español</option>
+            <option value="English">English</option>
+            <option value="Hindii">Hindi - हिन्दी</option>
+            <option value="Arabic">Arabic - العربية</option>
+            <option value="Portuguese">Portuguese - português</option>
+            <option value="Bengali">Bengali - বাংলা</option>
+            <option value="Russian">Russian - русский</option>
+            <option value="Japanese">Japanese - 日本語</option>
+            <option value="Punjabi">Punjabi - ਪੰਜਾਬੀ</option>
+            </select><br><br><br>
+
+            <label for="email">Email address:</label><br>
+            <input type="text" name="email" placeholder="Email" class="form-control inputbox"/><br>
+
+    </div>
+
+
+        <div class="container col">
+            <label for="fee">Fee per hour</label>
+            <input type="text" name="fee" placeholder="Fee per hour" class="form-control inputbox"></input><br><br>
+
+            <label for="gender">Gender:</label>
+            <select type="text" name="gender" class="form-select textstyle inputbox"><br>
+                <option selected >Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="others">Other</option>
+                <option value="n/a">Do not wish to response</option>
+            </select><br><br><br>
+
+            <label for="number">Mobile number:</label><br>
+            <input type="text" name="number" placeholder="Phone Number" class="form-control inputbox"/><br><br>
+            </div>
+
+        <div class="container col">
+        
+
+        <label for="description" style="padding-top: 115px;">Past work experience:</label>
+        <input type="text" name="description" placeholder = "Enter your experiences here" class="form-control textstyle inputbox"></input>
+        <input type="submit" value="submit" class = "submit" style="margin-top: 97px;">
+        </div>
+    </div>
+    <label class="form-label" for="customFile">Add your profile picture here</label>
+    <input type="file" name = "file" class="form-control" id="customFile"/><br>
+    <p class="form-text text-muted">*We will not, in any circumstances, share your personal information with other individuals or organizations without your permission, including public organizations, corporations or individuals. The information above will be only used to verify your identity. After you have submitted the registration form, a Nicely representative will contact you within 24 hours to verify your certification and background on the area of mental illness.*</p><br><br>
+    </div><br><br><br><br><br><br><br>
+</div>
+    </form>
+<div class="center">
+{%- for message in get_flashed_messages() %} 
+{{ message }}<br> 
+{%- endfor%}
+</div>
+
+    {% endblock %}
+

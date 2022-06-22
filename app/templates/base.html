@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="/static/styles/bootstrapmin.min.css" rel="stylesheet"/>
+      <link href="/static/styles/Signup.css" rel="stylesheet">
+      <link rel="icon" href="/static/images/nicely.svg">
+
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}{% endblock %}
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="/login">
+            <img src="/static/images/Logo2.png" width="55px" height="55px" style="margin-bottom: 12px;">
+            Nicely.Inc
+          </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/dashboard">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/view">Community</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/chat">Chat</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/info">Info</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    {% block content %}{% endblock %}
+  </body>
+</html>

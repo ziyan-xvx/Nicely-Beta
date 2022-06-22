@@ -1,0 +1,54 @@
+{% extends "base.html" %} 
+{% block title %}Welcome!{% endblock %} 
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block content %} 
+<body class="center">
+<br>
+
+<h2>Score details</h3>
+<br>
+<table class="table">
+
+  <br>
+  <h2>Raw table</h2>
+  <thead>
+    <tr>
+      <th scope="col">Username</th>
+      <th scope="col">Tweet_id</th>
+      <th scope="col">Content</th>
+      <th scope="col">Anger</th>
+      <th scope="col">Joy</th>
+      <th scope="col">Optimism</th>
+      <th scope="col">Sadness</th>
+      <th scope="col">Score</th>
+      <th scope="col">Time</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for info in data %}
+    <tr>
+      <td>{{ info.user_name }}</td>
+      <td>{{ info.Tweet_id }}</td>
+      <td>{{ info.content }}</td>
+      <td>{{ info.Anger }}</td>
+      <td>{{ info.Joy }}</td>
+      <td>{{ info.Optimism }}</td>
+      <td>{{ info.Sadness }}</td>
+      <td>{{ info.AveDailyScore }}</td>
+      <td>{{ info.Tweet_time }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{%- for message in get_flashed_messages() %} 
+{{ message }}  <br> 
+{%- endfor%}
+
+</body>
+
+    {% endblock %}

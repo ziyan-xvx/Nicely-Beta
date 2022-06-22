@@ -1,0 +1,156 @@
+{% extends "base.html" %} 
+{% block head%}
+<meta charset="uft-8">
+<style>body{background-color: rgb(247, 247, 247);}label{padding-bottom: 10px;}</style>
+{% endblock %}
+{% block title %}Let us know you better!{% endblock %} 
+
+{% block content %}
+
+<div id="myProgress">
+    <div id="myBar"></div>
+  </div>
+
+
+<div id="flashed" style="text-align: center;">
+{%- for message in get_flashed_messages() %} {{ message }} {%- endfor %}
+</div><br />
+    <form action="{{request.path}}" method="post" style="padding-top: 15px; border-radius: 15px;" id="myForm">
+        <div class="container border rounded " style="background-color: white;">
+        <div class="text-center">
+        <img src="/static/images/Logo2.png" width="110px" height="110px"><br>
+        <b style="font-size: 55px; font-family: PingFang SC;">Let us know you better.</b><br><br>
+    </div>
+        <div class="container" style="width: 1000px; height: 410px;">
+        <div class="row">
+        <div class="container col">
+        <div class="form-group">
+        <label for="Twitter">Twitter Username:</label><br>
+        <input type="text" name="twitter" placeholder="Twitter Account" class="form-control inputbox" /><br><br>
+        </div>
+        <label for="Language">First language:</label>
+        <select type="text" name="language" class="form-select textstyle inputbox"><br>
+            <option selected >Select</option>
+            <option value="zh">Chinese - 中文</option>
+            <option value="es">Spanish - español</option>
+            <option value="en">English</option>
+            <option value="hi">Hindi - हिन्दी</option>
+            <option value="ar">Arabic - العربية</option>
+            <option value="pt">Portuguese - português</option>
+            <option value="bn">Bengali - বাংলা</option>
+            <option value="ru">Russian - русский</option>
+            <option value="ja">Japanese - 日本語</option>
+            <option value="pa">Punjabi - ਪੰਜਾਬੀ</option>
+            </select><br><br><br>
+
+            <label for="email">Email address:</label><br>
+            <input type="text" name="email" placeholder="Email" class="form-control inputbox"/><br>
+
+    </div>
+
+
+        <div class="container col">
+            <label for="demographic">Demographic:</label>
+            <select type="text" name="demographic" class="form-select inputbox"><br>
+                <option selected >Select</option>
+                <option value="asian">Asian</option>
+                <option value="black">Black</option>
+                <option value="white">White</option>
+                <option value="aa">African American</option>
+            </select><br><br>
+
+            <label for="gender">Gender:</label>
+            <select type="text" name="gender" class="form-select textstyle inputbox"><br>
+                <option selected >Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="others">Other</option>
+                <option value="n/a">Do not wish to response</option>
+            </select><br><br><br>
+
+            <label for="Phone">Mobile number:</label><br>
+            <input type="text" name="phone" placeholder="Phone Number" class="form-control inputbox"/><br><br>
+            </div>
+
+        <div class="container col">
+        
+
+        <label for="WorkStatus" style="padding-top: 125px;">Current work status:</label>
+        <select type="text" name="workstatus" class="form-select textstyle inputbox">
+            <option selected >Select</option>
+            <option value="student">Student</option>
+            <option value="employed">Employed</option>
+            <option value="self-employed">Self-employed</option>
+            <option value="unemployed">Unemployed</option>
+
+        </select>
+        <button onclick="parallel()" type="button" class="submit" style="margin-top: 107px;">submit</button>
+        </div>
+    </div>
+    <p class="form-text text-muted">*We will not, in any circumstances, share your personal information with other individuals or organizations without your permission, including public organizations, corporations or individuals. The information above will be used to improve the accuracy of the analysis.*</p><br><br>
+    </div><br><br><br>
+</div>
+
+
+        <!-- <div id = "loading" class="container border" style="width: 800px; height: 100px; background-color: rgb(247, 247, 247); border-radius: 3px;">
+            <h2>LOADING...</h2>
+            <div id="myProgress">
+            <div id="myBar">0%</div>
+          </div> -->
+    </form>
+
+    <script>
+        const progress = document.getElementById("myProgress")
+        progress.style.display = "none"
+        var i = 0;
+        
+        const progressbar = () => {
+            return new Promise((resolve, reject) => {
+                progress.style.display = "inline-block"
+            if (i == 0) {
+                i = 1;
+                var elem = document.getElementById("myBar");
+                var width = 1;
+                var id = setInterval(frame, 10);
+                function frame() {
+                if (width >= 100) {
+                    progress.style.display = "none"
+                    clearInterval(id);
+                    i = 0;
+                    resolve("progress finished")
+                } else {
+                    width+=0.06;
+                    elem.style.width = width + "%";
+                }
+                }
+            }
+            })
+        }
+        
+        const submit = () => {
+            const flash_text = document.getElementById("flashed")
+            document.getElementById("myForm").submit()
+            return new Promise((resolve, reject) => {
+                    resolve("upload success")
+            })
+        }
+        
+        async function parallel() {
+          console.log('parallel start')
+        
+          await Promise.all([
+              (async()=>console.log(await progressbar()))(),
+              (async()=>console.log(await submit()))()
+          ])
+        }
+        
+    window.onload = () => {
+        console.log("loaded")
+        if (document.getElementById("flashed").innerText == "Records were successfully added"){
+            window.location.replace("/dashboard")
+        }
+    }
+    
+    </script>
+
+    {% endblock %}

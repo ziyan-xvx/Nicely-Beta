@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% block title %}Welcome!{% endblock %} {% block
+content %} {%- for message in get_flashed_messages() %} {{ message }}  <br> {%- endfor
+%}
+<br>
+<h3>registered accounts</h3><br>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Username</th>
+      <th scope="col">password</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.username }}</td>
+      <td>{{ user.password }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br><br>
+
+<h3>
+  Personal info
+</h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Twitter</th>
+      <th scope="col">demographic</th>
+      <th scope="col">language</th>
+      <th scope="col">work status</th>
+      <th scope="col">gender</th>
+      <th scope="col">phone</th>
+      <th scope="col">email</th>
+      <th scope="col">test</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for info in infos %}
+    <tr>
+      <td>{{ info.twitter }}</td>
+      <td>{{ info.demographic }}</td>
+      <td>{{ info.language }}</td>
+      <td>{{ info.workstatus }}</td>
+      <td>{{ info.gender }}</td>
+      <td>{{ info.phone }}</td>
+      <td>{{ info.email }}</td>
+      <td>test</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table><br>
+
+<h3>
+  <a href="signup">Back</a>
+</h3> 
+
+{% endblock %}

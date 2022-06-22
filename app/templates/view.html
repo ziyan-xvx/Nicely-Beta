@@ -1,0 +1,95 @@
+{% extends "base.html" %} {% block title %}Welcome!{% endblock %} 
+{% block head %}
+<style>body{background-color:rgb(247,247,247)}</style>
+{% endblock %}
+
+{% block
+  content %} 
+  <br>
+
+  <div class="container">
+<div class="row">
+    <div class="col-3">
+
+        <div class="card-body bg-white" style="border-radius: 10px;">
+
+
+          <h5 class="card-title">@{{usr}}</h5>
+          <p class="text-muted" style="font-size: small;">Some user description...</p>
+          <div class="card-text">This section is still under construction. However, the function of this section will be displaying past posts from the user and other public information </div>
+        </div>
+
+    </div>
+    <div class="col-6 center">
+
+        <div class="card-body bg-white" style="border-radius: 10px;">
+          <div class="container">
+          <h3>Hello @{{usr}}, How is your day?</h3><br>
+          <form action="{{request.path}}" method=post enctype=multipart/form-data>
+            <div class="input-group">
+            <textarea type="text" id = "content" style = "height: 100px;" name = "content" placeholder="Share your thoughts here, and use the file uploader below to tell us about your day!" class="form-control"  maxlength="1000"></textarea><br><br>
+          </div><br>
+          <input type="file" name = "file" class="form-control" id="customFile" style="margin-bottom: 10px;"/>
+            <div class="form-check container" style="width: 190px; height: 20px; margin-left: 75%;">
+              <input class="form-check-input" id ="checkbox" name = "checkbox" type="checkbox" value="" onclick = check() id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                Post anonymously
+              </label>
+            </div>
+            <input type="submit" value="Upload" class = "submit">
+          </div>
+          </form>
+        </div><br>
+    </div>
+    <div class="col">
+
+        <div class="card-body bg-white" style="border-radius: 10px;">
+          <h5 class="card-title">Happening today:</h5>
+          <div class="card-text" style="font-size: 15px;">This is section where we push you recent posts and new things happening in your community, follow some accounts to start!</div>
+          <img src="/static/images/Logo2.png" width="55px" height="55px" style="margin-bottom: 12px;">
+        </div>
+    </div>
+  </div>
+
+
+
+
+
+{% for post in posts %}
+
+<div class="row center">
+    <div class="col-3">
+    </div>
+    <div class="col-6">
+        <div class="card-body bg-white" style="border-radius: 10px;">
+          <h5 class="card-title"> @{{post.username}}</h5>
+          <p>{{post.post_content}}</p>
+          <img class ="img" src="{{post.media_directory}}"/><br /><br />
+        </div>
+        <div class="card-footer">
+          <small class="text-muted">Created at {{post.post_time}}</small>
+        </div>
+      </div>
+    <div class="col">
+    </div>
+  </div><br>
+</div>
+  {% endfor %}
+{%- for message in get_flashed_messages() %} {{ message }} <br />
+    {%- endfor %}
+
+<script>
+
+  check = () => {
+    checkStatus = document.getElementById('checkbox')
+    if (checkStatus.checked == false){
+    }
+    else{
+      checkStatus.value = "True"
+    }
+    console.log(checkStatus.value)
+  }
+
+</script>
+
+{% endblock %}

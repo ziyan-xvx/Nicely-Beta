@@ -1,0 +1,127 @@
+{% extends "base.html" %} 
+
+{% block title %}Welcome!{% endblock %} 
+
+{% block head %} 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <body class="center">
+    <img src="/static/images/Logo2.png" width="110px" height="110px"><br>
+    <h2>Welcome @{{usr}}!</h2>
+    <p class="text-muted">Here is a detailed description of your emotional snapshot. Click <a href="/explained" class = "text-muted style="text-decoration: underline;">here</a> to access the meanings behind the data.</p>
+    <div class="container">
+      <div class="row">
+        <div class="col container">
+      <h4 class="textstyle">Your Emotional Curve:</h4>
+    <div class="container border" style="border-radius: 10px; height: 410px; width: 800px;">
+    <canvas style="padding-bottom: 10px;"id="lineChart"></canvas>
+    <a href="/explained" class = "text-muted" style="text-decoration: underline;">How did we get those results?</a>
+    </div><br>
+
+    <h4 class="textstyle">Your Emotional Polar Graph:</h4>
+    <div class="container border" style="border-radius: 10px; height: 415px; width: 800px;">
+      <canvas style="padding-bottom: 10px;" id="polarChart"></canvas>
+      <a href="/scoredetail" class = "text-muted" style="text-decoration: underline;">See your detailed emotional details</a>
+      </div>
+      </div>
+
+    <div class="col">
+      <h4 class="title textstyle">Your average Emotion score is: </h4>
+      <div class="container border" style="border-radius: 10px;">
+        <div style="font-size: 100px;">{{EmotionScore}}</div>
+        <a href="/quiz" class = "text-muted" style="text-decoration: underline;"> Take a 30-seconds emotional check in</a><br><br>
+      </div><br>
+      <h4 class="textstyle">Analysis of your recent activities:</h4>
+      <div class="container border" style="border-radius: 10px; height: 625px;">
+        <div class="d-flex justify-content-evenly" style="flex-wrap: wrap;">
+          {% for number in numbers %}
+                  <canvas id="lineChart{{number}}" width="200" height="200"></canvas>
+          {% endfor %}
+      </div>
+    </div>
+    </div>
+    </div><br>
+
+    <script>
+      var timestamp = {{ lables | safe }}
+      var values = {{ values | safe }}
+      var radar = {{ radar | safe }}
+      var valuesR = {{ values_pie | safe }}
+
+      var ctx = document.getElementById("lineChart").getContext("2d");
+      var lineChart = new Chart(ctx,{
+          type: "line",
+          data: {
+            labels: timestamp,
+            datasets: [{
+                label: "Post emotional score",
+                data: values,
+                fill: false,
+                borderColor: "rgb(75, 192, 192)",
+                lineTension: 0.1
+              }]
+         },
+        options:{
+          scales: {
+                    xAxes: [{
+                        ticks: {
+                            maxTicksLimit: 15
+                        }
+                    }]
+            }
+        },
+        responsive: true
+      });
+
+      var polar = document.getElementById("polarChart").getContext("2d");
+      var PolarChart = new Chart(polar,{
+          type: "polarArea",
+          data: {
+            labels: ["Anger", "Optimism", "Joy", "Sadness"],
+            datasets: [{
+                label: 'Emotional Snapshot',
+                data: radar,
+                backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(75, 192, 192)',
+      'rgb(255, 205, 86)',
+      'rgb(54, 162, 235)'
+        ],
+              }]
+         },
+        options:{
+          responsive: true
+        }
+      });
+
+
+for (var i = 0; i < 6; i++) {
+var piectx = document.getElementById(`lineChart${i}`).getContext("2d");
+
+var PieChart = new Chart(piectx,{
+  type: "doughnut",
+  data: {
+    labels: ["Anger", "Joy", "Optimism", "Sadness"],
+    datasets: [{
+        data: valuesR[i],
+        backgroundColor: ["rgb(0, 158, 242)","rgb(255, 208, 47)","rgb(255, 77, 125)","rgb(0, 195, 195)"],
+      }]
+ },
+options:{
+  responsive: false,
+  title: {
+    display: true,
+    text: `Post at ${timestamp[i]}`
+  },
+}
+});}
+
+      </script>
+
+{%- for message in get_flashed_messages() %} 
+{{ message }}<br> 
+{%- endfor%}
+</body>
+    {% endblock %}

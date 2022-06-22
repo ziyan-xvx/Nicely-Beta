@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="/static/styles/bootstrapmin.min.css" rel="stylesheet"/>
+      <link href="/static/styles/Signup.css" rel="stylesheet">
+      <link rel="icon" href="/static/images/nicely.svg">
+    <title>User Sign-up</title>
+  </head>
+
+    <body style="background-color: rgb(247, 247, 247);" class="center">
+      
+        <img src="/static/images/Logo.png" style="padding-top: 10px;">
+    <div class="card" style="width: 30rem; height: 25rem; margin: auto;">
+    <h3 style="padding-top: 40px;"> User signup </h3>
+    <form action="{{request.path}}" method="post" style="padding-top: 40px;">
+      <div class="form-group">
+        <div class="mx-sm-3">
+        <label for="Username" class="card-text sr-only">Username:</label>
+        <input type="text" name="username" placeholder="Username" class="form-control"/><br>
+      </div>
+      <div class="mx-sm-3">
+        <label for="Password" class="card-text">Password:</label>
+        <input type="text" name="password" placeholder="Password" class="form-control"/><br>
+      </div>
+        <input type="submit" value="Submit" class="Button"/>
+    </form> <br><br>
+    <a href="/login" class="link">Back to Login</a>
+    </div> <br> 
+    {%- for message in get_flashed_messages() %} {{ message }}  <br> {%- endfor
+        %}  
+</body>
+    
