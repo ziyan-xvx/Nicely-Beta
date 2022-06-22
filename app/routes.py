@@ -100,7 +100,7 @@ def login():
                 session['user_logged_in'] = request.form['username']
                 return redirect(url_for('dashboard'))
             else:
-                flash('invalid password or username')
+                flash('invalid password or username, please create a new account if you do not have a existing one')
     return render_template("login.html")
 
 @app.route('/logout', methods = ['GET', 'POST'])

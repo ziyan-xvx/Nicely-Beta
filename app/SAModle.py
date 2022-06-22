@@ -3,10 +3,9 @@ from transformers import AutoTokenizer
 import numpy as np
 from scipy.special import softmax
 
-MODEL = f"cardiffnlp/twitter-roberta-base-emotion"
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
+tokenizer = AutoTokenizer.from_pretrained('app/model/', local_files_only=True)
 labels = ['anger', 'joy', 'optimism', 'sadness']
-model = AutoModelForSequenceClassification.from_pretrained(MODEL)
+model = AutoModelForSequenceClassification.from_pretrained('app/model/', local_files_only=True)
 
 def preprocess(raw):
     new_text = []
