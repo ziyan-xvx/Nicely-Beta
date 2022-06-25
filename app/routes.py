@@ -1,19 +1,20 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for, flash, session
 from datetime import datetime
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, true
 import os
 import pandas as pd
 from werkzeug.utils import secure_filename
 from app.scrapper import getClient, twitter_verify
 from app.visualization import process, processtext, graphplot
 from app.SAModle import analysis
+from app.wtforms import InfoForm, RegistrationForm, LoginForm, ViewForm, RegisterForm
 
 from app.models import Users, Nicely_post, infos, user_tweets, Counselor
 db.create_all()
 engine = create_engine('sqlite:///app/userdata.sqlite3', echo=False)
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 class StatusDenied(Exception):
     pass
@@ -36,49 +37,45 @@ def admin():
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def signup():
+    registration_form = RegistrationForm()
     user_logged_in = session.get("user_logged_in")
     user_active = Users.query.filter_by(username = user_logged_in).first()
     if user_active:
         return redirect("/dashboard", code = 302)
 
     if request.method == 'POST':
-        if not request.form['username'] or not request.form['password']:
-            flash('Please enter all the fields', 'error')
-        else:
-            username = request.form['username']
-            password = request.form['password']
-            user = Users(username, password)
-            session['user_logged_in'] = username
+        username = registration_form.username.data
+        password = registration_form.password.data
+        user = Users(username, password)
+        session['user_logged_in'] = username
 
-            db.session.add(user)
-            db.session.commit()
+        db.session.add(user)
+        db.session.commit()
 
-            return redirect(url_for('personalinfo', data = username))
-    return render_template("signup.html")
+        return redirect(url_for('personalinfo', data = username))
+    return render_template("signup.html", form = registration_form)
 
 @app.route('/personal-info', methods = ['GET', 'POST'])
 def personalinfo():
+    info_form = InfoForm()
     user_logged_in = session.get("user_logged_in")
     if request.method == 'POST':
-        if not request.form['gender'] or not request.form['phone'] or not request.form['email'] or not request.form['twitter']:
-            flash('Please enter all the required fields')
-            return redirect('/personal-info')
-        if twitter_verify(request.form['twitter']) == False:
-            print("second verify false")
-            flash('Please enter a corrent twitter username without "@" under your profile')
+        if twitter_verify(info_form.twitter_username.data) == False:
+            print("twitter false")
+            flash('Please enter a correct twitter username without "@" under your profile')
             redirect('/personal-info')
         else: 
-            print("second verify true")
-            info = infos(user_name = user_logged_in, demographic = request.form['demographic'], twitter = request.form['twitter'], language = request.form['language'],
-                         workstatus = request.form['workstatus'], gender = request.form['gender'], phone = request.form['phone'], email = request.form['email'])
+            print("twitter true")
+            info = infos(user_name = user_logged_in, demographic = info_form.demographic.data, twitter = info_form.twitter_username.data, language = info_form.first_language.data,
+                         workstatus = info_form.work_status.data, gender = info_form.gender.data, phone = info_form.number.data, email = info_form.email.data)
             db.session.add(info)
             print(f"added to the queue, Now fetching social data")
-            twitter_name = request.form['twitter']
+            twitter_name = info_form.twitter_username.data
             resultReturned = getClient(twitter_name, user_logged_in)
             graphplot(resultReturned)
             db.session.commit()
             flash('Records were successfully added')
-    return render_template("personalinfo.html")
+    return render_template("personalinfo.html", form = info_form)
 
 @app.route('/')
 def main():
@@ -86,22 +83,20 @@ def main():
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
+    login_form = LoginForm()
     user_logged_in = session.get("user_logged_in")
     user_active = Users.query.filter_by(username = user_logged_in).first()
     if user_active:
         return redirect("/dashboard", code = 302)
 
     if request.method == 'POST':
-        if not request.form['username'] or not request.form['password']:
-            flash('Please enter all the fields', 'error')
+        user = Users.query.filter_by(username = login_form.username.data).first()
+        if user and user.password == login_form.password.data:
+            session['user_logged_in'] = login_form.username.data
+            return redirect(url_for('dashboard'))
         else:
-            user = Users.query.filter_by(username = request.form['username']).first()
-            if user and user.password == request.form['password']:
-                session['user_logged_in'] = request.form['username']
-                return redirect(url_for('dashboard'))
-            else:
-                flash('invalid password or username, please create a new account if you do not have a existing one')
-    return render_template("login.html")
+            flash('invalid password or username, please create a new account if you do not have a existing one')
+    return render_template("login.html", form = login_form)
 
 @app.route('/logout', methods = ['GET', 'POST'])
 def logout():
@@ -171,19 +166,17 @@ def allowed_file(filename):
 
 @app.route('/view', methods = ['GET', 'POST'])
 def view():
+    view_form = ViewForm()
     currently_logged_in()
     if request.method == 'POST':
-        posttext = request.form.get('content')
-        checkStatus = request.form.get('checkbox')
+        posttext = view_form.post_content.data
+        checkStatus = view_form.post_anonymously.data
         databack = analysis(posttext)
         scoredetail = process(databack)
         Avescore = processtext(scoredetail)
 
-        file = request.files['file']
+        file = view_form.post_image.data
 
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
         if file and allowed_file(file.filename):
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             user_logged_in = session.get("user_logged_in")
@@ -194,7 +187,7 @@ def view():
             file.save(os.path.join(app.config['UPLOAD_FOLDER']+ user_directory, file.filename))
             media_path = "/static/upload" + user_directory + file.filename
 
-            if checkStatus == "True":
+            if checkStatus == False:
                 post = Nicely_post("Anonymous", filename, posttext, media_path, time)
                 db.session.add(post)
             else:
@@ -209,8 +202,8 @@ def view():
     user_logged_in = session.get("user_logged_in")
     pastposts = engine.execute('SELECT * FROM Nicely_post ORDER BY user_post_id DESC;')
     if pastposts :
-        return render_template("view.html", posts = pastposts, usr = user_logged_in, filled = True)
-    return render_template("view.html", usr = user_logged_in)
+        return render_template("view.html", posts = pastposts, usr = user_logged_in, filled = True, form = view_form)
+    return render_template("view.html", usr = user_logged_in, form = view_form)
 
 @app.route('/explained')
 def explained():
@@ -245,22 +238,20 @@ def quiz():
 
 @app.route('/chat_signup', methods = ['GET', 'POST'])
 def chat_signup():
+    register_form = RegisterForm()
     currently_logged_in()
     if request.method == 'POST':
         username = session.get("user_logged_in")
-        name = request.form.get('name')
-        description = request.form.get('description')
-        fee = request.form.get('fee')
-        language = request.form.get('language')
-        number = request.form.get('number')
-        gender = request.form.get('gender')
-        email = request.form.get('email')
-        file = request.files['file']
+        name = register_form.register_name.data
+        description = register_form.work_experience.data
+        fee = register_form.cost.data
+        language = register_form.language_preferred.data
+        number = register_form.register_number.data
+        gender = register_form.register_gender.data
+        email = register_form.register_email.data
+        file = register_form.register_image.data
 
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
+        if allowed_file(file.filename):
             filename_secure = secure_filename(file.filename)
             filename, file_extension = os.path.splitext(filename_secure)
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -274,7 +265,7 @@ def chat_signup():
             db.session.add(people)
             db.session.commit()
             return redirect(url_for('chat'))
-    return render_template("chat_signup.html")
+    return render_template("chat_signup.html", form = register_form)
 
 @app.route('/chat')
 def chat():

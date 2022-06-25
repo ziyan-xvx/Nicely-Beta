@@ -16,13 +16,14 @@
     <form action="{{request.path}}" method="post" style="padding-top: 40px;">
       <div class="form-group">
         <div class="mx-sm-3">
-        <label for="Username" class="card-text sr-only">Username:</label>
-        <input type="text" name="username" placeholder="Username" class="form-control"/><br>
-      </div>
+          {{ form.csrf_token }}
+          {{ form.username.label(class="card-text sr-only") }}:
+          {{ form.username(placeholder="Username", class="form-control") }}
+          <br></div>
       <div class="mx-sm-3">
-        <label for="Password" class="card-text">Password:</label>
-        <input type="text" name="password" placeholder="Password" class="form-control"/><br>
-      </div>
+        {{ form.password.label(class="card-text") }}
+        {{ form.password(placeholder="Password", class="form-control") }}
+      <br></div>
         <input type="submit" value="Submit" class="Button"/>
     </form> <br><br>
     <a href="/signup" class="link">Don't have an account?</a>

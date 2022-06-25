@@ -26,15 +26,15 @@
           <div class="container">
           <h3>Hello @{{usr}}, How is your day?</h3><br>
           <form action="{{request.path}}" method=post enctype=multipart/form-data>
+            {{ form.csrf_token }}
             <div class="input-group">
-            <textarea type="text" id = "content" style = "height: 100px;" name = "content" placeholder="Share your thoughts here, and use the file uploader below to tell us about your day!" class="form-control"  maxlength="1000"></textarea><br><br>
-          </div><br>
-          <input type="file" name = "file" class="form-control" id="customFile" style="margin-bottom: 10px;"/>
+            {{ form.post_content(id = "content", style = "height: 100px;", placeholder="Share your thoughts here, and use the file uploader below to tell us about your day!", class="form-control") }}<br><br>
+          </div><br> 
+          {{ form.post_image(class="form-control", id="customFile", style="margin-bottom: 10px;") }}
             <div class="form-check container" style="width: 190px; height: 20px; margin-left: 75%;">
-              <input class="form-check-input" id ="checkbox" name = "checkbox" type="checkbox" value="" onclick = check() id="flexCheckDefault">
-              <label class="form-check-label" for="flexCheckDefault">
-                Post anonymously
-              </label>
+              {{ form.post_anonymously(class="form-check-input", id ="checkbox", type="checkbox", value="", id="flexCheckDefault") }}
+              {{ form.post_anonymously.label(class="form-check-label", for="flexCheckDefault") }}
+
             </div>
             <input type="submit" value="Upload" class = "submit">
           </div>
@@ -77,19 +77,5 @@
   {% endfor %}
 {%- for message in get_flashed_messages() %} {{ message }} <br />
     {%- endfor %}
-
-<script>
-
-  check = () => {
-    checkStatus = document.getElementById('checkbox')
-    if (checkStatus.checked == false){
-    }
-    else{
-      checkStatus.value = "True"
-    }
-    console.log(checkStatus.value)
-  }
-
-</script>
 
 {% endblock %}
